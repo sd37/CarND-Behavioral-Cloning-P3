@@ -49,6 +49,7 @@ from keras.layers.core import Dense, Activation, Flatten, Dropout
 from keras.layers import Lambda
 from keras.layers.convolutional import Convolution2D
 from keras.activations import relu, softmax
+from keras.layers.pooling import MaxPooling2D
 
 model = Sequential()
 # Preprocess incoming data, centered around zero with small standard deviation 
@@ -57,21 +58,30 @@ model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(row,col,ch)))
 # model.add(... finish defining the rest of your model architecture here ...)
 
 model.add(Convolution2D(16, 8, 8, border_mode='same'))
+model.add(MaxPooling2D((2, 2), border_mode = 'same'))
+model.add(Dropout(0.5))
 model.add(Activation('relu'))
+
 
 model.add(Convolution2D(32, 5, 5, border_mode='same'))
+model.add(MaxPooling2D((2, 2), border_mode = 'same'))
+model.add(Dropout(0.5))
 model.add(Activation('relu'))
+
 
 model.add(Convolution2D(64, 5, 5, border_mode='same'))
+model.add(MaxPooling2D((2, 2), border_mode = 'same'))
+model.add(Dropout(0.5))
 model.add(Activation('relu'))
+
 model.add(Flatten())
 
-model.add(Dropout(0.5))
+model.add(Dropout(0.2))
 
 model.add(Activation('relu'))
 model.add(Dense(512))
 
-model.add(Dropout(.5))
+model.add(Dropout(0.2))
 
 model.add(Activation('relu'))
 model.add(Dense(1))
