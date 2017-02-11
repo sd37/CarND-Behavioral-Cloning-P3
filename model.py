@@ -33,8 +33,6 @@ def generator(samples, batch_size=32):
                 angles.append(center_angle)
 
             X_train = np.array(images)
-            # trim the image
-            X_train = X_train[:,20:,:,:] 
             y_train = np.array(angles)
             yield sklearn.utils.shuffle(X_train, y_train)
 
@@ -42,7 +40,7 @@ def generator(samples, batch_size=32):
 train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
 
-ch, row, col = 3, 20, 80  # Trimmed image format
+ch, row, col = 3, 40, 80  # Trimmed image format
 
 # TA_CODE ENDS
 
@@ -80,7 +78,7 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 size_validation_samples = len(validation_samples)
-model.fit_generator(train_generator, samples_per_epoch= 3, nb_epoch=1,
+model.fit_generator(train_generator, samples_per_epoch= 128, nb_epoch=5,
             validation_data=validation_generator, 
             nb_val_samples= size_validation_samples)
 

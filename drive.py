@@ -22,7 +22,7 @@ prev_image_array = None
 
 def preprocess_image(image_array):
     # convert image_array to BGR format
-    ch, row, col = 3, 20, 80
+    ch, row, col = 3, 40, 80
     image_array = cv2.resize(image_array, (col,row))
     image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
     return image_array
