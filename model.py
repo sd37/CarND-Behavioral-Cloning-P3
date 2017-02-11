@@ -26,14 +26,15 @@ def generator(samples, batch_size=32):
             for batch_sample in batch_samples:
                 name = batch_sample[0]
                 img = cv2.imread(name)
-                center_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img = cv2.resize(img, (80,40))
+                center_image = img
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
 
             X_train = np.array(images)
             # trim the image
-            X_train = X_train[:,80:,:,:] 
+            X_train = X_train[:,20:,:,:] 
             y_train = np.array(angles)
             yield sklearn.utils.shuffle(X_train, y_train)
 
@@ -41,7 +42,7 @@ def generator(samples, batch_size=32):
 train_generator = generator(train_samples, batch_size=32)
 validation_generator = generator(validation_samples, batch_size=32)
 
-ch, row, col = 3, 80, 320  # Trimmed image format
+ch, row, col = 3, 20, 80  # Trimmed image format
 
 # TA_CODE ENDS
 
