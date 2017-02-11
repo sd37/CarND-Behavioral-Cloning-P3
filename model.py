@@ -88,7 +88,7 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 size_validation_samples = len(validation_samples)
-model.fit_generator(train_generator, samples_per_epoch= 128, nb_epoch=5,
+model.fit_generator(train_generator, samples_per_epoch= 2048, nb_epoch=5,
             validation_data=validation_generator, 
             nb_val_samples= size_validation_samples)
 
