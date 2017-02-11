@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import shutil
 
+import cv2
 import numpy as np
 import socketio
 import eventlet
@@ -19,13 +20,18 @@ app = Flask(__name__)
 model = None
 prev_image_array = None
 
+def preprocess_image(image_array):
+    # convert image_array to BGR format
+    ch, row, col = 3, 20, 80
+    image_array = cv2.resize(image_array, (col,row))
+    image_array = cv2.cvtColor(image_array, cv2.COLOR_RGB2BGR)
+    return image_array
 
 @sio.on('telemetry')
 def telemetry(sid, data):
     if data:
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
-        print("current_steering_angle", steering_angle)
 
         # The current throttle of the car
         throttle = data["throttle"]
@@ -34,9 +40,9 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
-        print("Image:", image)
-        image_array = np.asarray(image)
-        
+        image_array = np.asarray(image)  
+        image_array = preprocess_image(image_array)
+
         print("predicting steering_angle ..")
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
         throttle = 0.2
