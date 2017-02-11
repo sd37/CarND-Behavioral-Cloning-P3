@@ -25,6 +25,7 @@ def telemetry(sid, data):
     if data:
         # The current steering angle of the car
         steering_angle = data["steering_angle"]
+        print("current_steering_angle:", steering_angle)
         # The current throttle of the car
         throttle = data["throttle"]
         # The current speed of the car
@@ -33,6 +34,7 @@ def telemetry(sid, data):
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
         image_array = np.asarray(image)
+        print("predicting steering_angle ...")
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
         throttle = 0.2
         print(steering_angle, throttle)

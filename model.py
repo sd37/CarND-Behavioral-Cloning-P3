@@ -25,12 +25,14 @@ def generator(samples, batch_size=32):
             angles = []
             for batch_sample in batch_samples:
                 name = batch_sample[0]
-                center_image = cv2.cvtColor(cv2.imread(name), cv2.COLOR_BGR2RGB)
+                img = cv2.imread(name)
+                center_image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
 
             X_train = np.array(images)
+            # trim the image
             X_train = X_train[:,80:,:,:] 
             y_train = np.array(angles)
             yield sklearn.utils.shuffle(X_train, y_train)
@@ -77,9 +79,9 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 size_validation_samples = len(validation_samples)
-model.fit_generator(train_generator, samples_per_epoch= 128,
+model.fit_generator(train_generator, samples_per_epoch= 3, nb_epoch=3
             validation_data=validation_generator, 
-            nb_val_samples= size_validation_samples, nb_epoch=3)
+            nb_val_samples= size_validation_samples)
 
 
 print("Saving model in .. ")
