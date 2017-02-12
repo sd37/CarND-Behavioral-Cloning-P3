@@ -24,13 +24,29 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             for batch_sample in batch_samples:
-                name = batch_sample[0]
-                img = cv2.imread(name)
-                img = cv2.resize(img, (80,40))
-                center_image = img
+                c_name = batch_sample[0].strip()
+                c_img = cv2.imread(c_name)
+                c_img = cv2.resize(c_img, (80,40))
+                center_image = c_img
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
+                
+                l_name = batch_sample[1].strip()
+                l_img = cv2.imread(l_name)
+                l_img = cv2.resize(l_img, (80,40))
+                left_image = l_img
+                left_angle = float(batch_sample[3])
+                images.append(left_image)
+                angles.append(left_angle)
+
+                r_name = batch_sample[2].strip()
+                r_img = cv2.imread(r_name)
+                r_img = cv2.resize(r_img, (80,40))
+                right_image = r_img
+                right_angle = float(batch_sample[3])
+                images.append(right_image)
+                angles.append(right_angle)
 
             X_train = np.array(images)
             y_train = np.array(angles)
@@ -88,7 +104,7 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 size_validation_samples = len(validation_samples)
-model.fit_generator(train_generator, samples_per_epoch= 2048, nb_epoch=5,
+model.fit_generator(train_generator, samples_per_epoch= 4096, nb_epoch=5,
             validation_data=validation_generator, 
             nb_val_samples= size_validation_samples)
 
