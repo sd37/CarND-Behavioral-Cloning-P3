@@ -14,16 +14,20 @@ train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 import cv2
 import numpy as np
 import sklearn
+from random import shuffle
 
 def generator(samples, batch_size=32):
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
+        shuffle(samples)
         for offset in range(0, num_samples, batch_size):
             batch_samples = samples[offset:offset+batch_size]
 
             images = []
             angles = []
             for batch_sample in batch_samples:
+                correction = 0.2
+
                 c_name = batch_sample[0].strip()
                 c_img = cv2.imread(c_name)
                 c_img = cv2.resize(c_img, (80,40))
@@ -36,7 +40,7 @@ def generator(samples, batch_size=32):
                 l_img = cv2.imread(l_name)
                 l_img = cv2.resize(l_img, (80,40))
                 left_image = l_img
-                left_angle = float(batch_sample[3])
+                left_angle = float(batch_sample[3]) + correction
                 images.append(left_image)
                 angles.append(left_angle)
 
@@ -44,7 +48,7 @@ def generator(samples, batch_size=32):
                 r_img = cv2.imread(r_name)
                 r_img = cv2.resize(r_img, (80,40))
                 right_image = r_img
-                right_angle = float(batch_sample[3])
+                right_angle = float(batch_sample[3]) - correction
                 images.append(right_image)
                 angles.append(right_angle)
 
@@ -104,7 +108,7 @@ model.add(Dense(1))
 
 model.compile(loss='mse', optimizer='adam')
 size_validation_samples = len(validation_samples)
-model.fit_generator(train_generator, samples_per_epoch= 4096, nb_epoch=5,
+model.fit_generator(train_generator, samples_per_epoch= 20480, nb_epoch=5,
             validation_data=validation_generator, 
             nb_val_samples= size_validation_samples)
 
