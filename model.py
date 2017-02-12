@@ -26,7 +26,7 @@ def generator(samples, batch_size=32):
             images = []
             angles = []
             for batch_sample in batch_samples:
-                correction = 0.2
+                correction = 0.4
 
                 c_name = batch_sample[0].strip()
                 c_img = cv2.imread(c_name)
@@ -70,10 +70,12 @@ from keras.layers import Lambda
 from keras.layers.convolutional import Convolution2D
 from keras.activations import relu, softmax
 from keras.layers.pooling import MaxPooling2D
+from keras.layers import Cropping2D
 
 model = Sequential()
 # Preprocess incoming data, centered around zero with small standard deviation 
-model.add(Lambda(lambda x: (x / 255.0) - 0.5, input_shape=(row,col,ch)))
+model.add(Cropping2D(cropping=((5,10), (0,0)), input_shape=(row,col,ch)))
+model.add(Lambda(lambda x: (x / 255.0) - 0.5))
 
 # model.add(... finish defining the rest of your model architecture here ...)
 

@@ -53,7 +53,7 @@ def telemetry(sid, data):
         elif float(speed) > max_speed:
             throttle = -1.0
         else:
-            throttle = 0.2
+            throttle = 0.1
 
         print(steering_angle, throttle, speed)
         send_control(steering_angle, throttle)
