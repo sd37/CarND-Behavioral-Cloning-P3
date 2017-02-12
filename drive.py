@@ -20,6 +20,9 @@ app = Flask(__name__)
 model = None
 prev_image_array = None
 
+max_speed_limit = -1
+min_speed_limit = -1
+
 def preprocess_image(image_array):
     # convert image_array to BGR format
     ch, row, col = 3, 40, 80
@@ -40,6 +43,8 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        print("Image details:", image)
+
         image_array = np.asarray(image)  
         image_array = preprocess_image(image_array)
 
@@ -47,8 +52,8 @@ def telemetry(sid, data):
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
         # control speed of vehicle
-        min_speed = 2
-        max_speed = 5
+        min_speed = min_speed_limit
+        max_speed = max_speed_limit
         if float(speed) < min_speed:
             throttle = 1.0
         elif float(speed) > max_speed:
@@ -104,9 +109,29 @@ if __name__ == '__main__':
         default='',
         help='Path to image folder. This is where the images from the run will be saved.'
     )
-    args = parser.parse_args()
 
+    parser.add_argument(
+            'max_speed_limit',
+            type=int,
+            nargs='?',
+            default=15,
+            help='Max speed limit of your track. default = 15')
+
+    parser.add_argument(
+            'min_speed_limit',
+            type=int,
+            nargs='?',
+            default=10,
+            help='min speed limit of your track. default = 10')
+
+    args = parser.parse_args()
     model = load_model(args.model)
+
+    min_speed_limit = args.min_speed_limit
+    max_speed_limit = args.max_speed_limit
+
+    print("min_speed_limit:", min_speed_limit)
+    print("max_speed_limit:", max_speed_limit)
 
     if args.image_folder != '':
         print("Creating image folder at {}".format(args.image_folder))
